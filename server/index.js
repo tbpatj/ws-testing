@@ -4,6 +4,7 @@ const express = require("express");
 const { Server } = require("ws");
 
 const PORT = process.env.PORT || 3000;
+const SOCKET_PORT = parseInt(process.env.PORT) + 1 || 3001;
 const INDEX = "/index.html";
 
 const server = express();
@@ -20,7 +21,7 @@ server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 let incrementID = 0;
 let players = {};
 
-const wss = new Server({ port: PORT + 1 });
+const wss = new Server({ port: SOCKET_PORT });
 
 wss.on("connection", (ws) => {
   let id = -1;
