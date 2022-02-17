@@ -1,14 +1,20 @@
 "use strict";
-
+const path = require("path");
 const express = require("express");
 const { Server } = require("ws");
 
 const PORT = process.env.PORT || 3000;
 const INDEX = "/index.html";
 
-const server = express()
-  .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
-  .listen(PORT, () => console.log(`Listening on ${PORT}`));
+const server = express();
+//server static files from the React App
+server.use(express.static(path.join(__dirname, "../client/build")));
+
+server.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname + "../client/build/index.html"));
+});
+
+server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 const wss = new Server({ server });
 
