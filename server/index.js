@@ -8,6 +8,8 @@ const { connected } = require("process");
 
 let wss;
 let server;
+let incrementID = 0;
+let players = {};
 const PORT = process.env.PORT || 3000;
 const app = express();
 app.use(express.static(path.join(__dirname, "./../client/build")));
@@ -17,13 +19,22 @@ wss = new WSServer({ server });
 
 this.wss = wss;
 wss.on("connection", function (socket) {
+  let id = -1;
   console.log(
     new Date().toTimeString(),
     `client connected to server (${wss.clients.size} total)`
   );
   socket.on("message", (data) => {
     let parsedData = JSON.parse(data.toString());
-    console.log(parsedData);
+    if (parsedData.text === "requestingID") {
+      socket.send(JSON.stringify({ text: "sendingID", id: incrementID }));
+      id = incrementID;
+      incrementID++;
+    } else if (parsedData.text === "updatingMyPlay") {
+      console.log(parsedData);
+      players[parsedData.id] = { x: parsedData.x, y: parsedData.y };
+      incrementID++;
+    }
   });
   socket.on("close", (code, desc) => {
     console.log("client disconnected");
@@ -33,7 +44,7 @@ wss.on("connection", function (socket) {
 wss.on("listening", () => console.log("websocket listening on port", PORT));
 
 server.on("error", (err) => console.log("Server Err:", err));
-server.listen(PORT, () => console.log("server started on"));
+server.listen(PORT, () => console.log("server started on", PORT));
 
 // this.wss = wss;
 

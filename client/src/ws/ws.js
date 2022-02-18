@@ -7,16 +7,25 @@ export default async function wsConnect(dispatch) {
       // const port = 3000;
       // const socketURL = `${socketProtocol}//${window.location.hostname}:${port}`;
       // socket = new WebSocket(socketURL);
-
-      let HOST = window.location.origin.replace(/^http/, "ws");
-      let socket = new WebSocket(HOST);
-
+      let socket;
+      if (String(window.location).includes("localhost")) {
+        console.log("second option");
+        const socketProtocol =
+          window.location.protocol === "https:" ? "wss:" : "ws:";
+        const port = 3000;
+        const socketURL = `${socketProtocol}//${window.location.hostname}:${port}`;
+        socket = new WebSocket(socketURL);
+      } else {
+        let HOST = window.location.origin.replace(/^http/, "ws");
+        socket = new WebSocket(HOST);
+      }
+      console.log(socket);
       //when we open the connection send in a bit of test data
       socket.onopen = (e) => {
         console.log("opening");
         socket.send(JSON.stringify({ loaded: true, text: "requestingID" }));
         //resolve the promise
-        resolve();
+        resolve(socket);
       };
 
       socket.onmessage = (data) => {
@@ -43,7 +52,7 @@ export default async function wsConnect(dispatch) {
       socket.onclose = (data) => {};
       socket.onerror = (e) => {
         console.log(e);
-        resolve();
+        resolve(socket);
         connect(dispatch);
       };
     });
@@ -51,7 +60,7 @@ export default async function wsConnect(dispatch) {
   const isOpen = function (ws) {
     return ws.readyState === ws.OPEN;
   };
-  await connect(dispatch);
+  socket = await connect(dispatch);
   console.log(socket);
   return socket;
 }
