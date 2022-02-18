@@ -2,16 +2,14 @@ export default async function wsConnect(dispatch) {
   let socket;
   async function connect(dispatch) {
     return new Promise((resolve, reject) => {
-      const socketProtocol =
-        window.location.protocol === "https:" ? "wss:" : "ws:";
-      const port = 3000;
-      const socketURL = `${socketProtocol}//${window.location.hostname}:${port}`;
-      socket = new WebSocket(socketURL);
+      // const socketProtocol =
+      //   window.location.protocol === "https:" ? "wss:" : "ws:";
+      // const port = 3000;
+      // const socketURL = `${socketProtocol}//${window.location.hostname}:${port}`;
+      // socket = new WebSocket(socketURL);
 
-      /**
       let HOST = window.location.origin.replace(/^http/, "ws");
       let socket = new WebSocket(HOST);
-      */
 
       //when we open the connection send in a bit of test data
       socket.onopen = (e) => {
