@@ -14,12 +14,14 @@ export default async function wsConnect(dispatch) {
           window.location.protocol === "https:" ? "wss:" : "ws:";
         const port = 3000;
         const socketURL = `${socketProtocol}//${window.location.hostname}:${port}`;
+        console.log("socket host", socketURL);
         socket = new WebSocket(socketURL);
       } else {
         let HOST = window.location.origin.replace(/^http/, "ws");
+        console.log("socket host", HOST);
         socket = new WebSocket(HOST);
       }
-      console.log(socket);
+      console.log("after socket", socket);
       //when we open the connection send in a bit of test data
       socket.onopen = (e) => {
         console.log("opening");
@@ -61,6 +63,6 @@ export default async function wsConnect(dispatch) {
     return ws.readyState === ws.OPEN;
   };
   socket = await connect(dispatch);
-  console.log(socket);
+  console.log("opened socket", socket);
   return socket;
 }
