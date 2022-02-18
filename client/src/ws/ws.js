@@ -4,7 +4,7 @@ export default async function wsConnect(dispatch) {
     return new Promise((resolve, reject) => {
       const socketProtocol =
         window.location.protocol === "https:" ? "wss:" : "ws:";
-      const port = 3001;
+      const port = 3000;
       const socketURL = `${socketProtocol}//${window.location.hostname}:${port}`;
       socket = new WebSocket(socketURL);
 
