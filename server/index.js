@@ -19,11 +19,18 @@ wss = new WSServer({ server });
 
 this.wss = wss;
 wss.on("connection", function (socket) {
+  console.log("connecting");
+  socket.onopen = () => {
+    console.log("opening");
+  };
   let id = -1;
-  console.log(
-    new Date().toTimeString(),
-    `client connected to server (${wss.clients.size} total)`
-  );
+  socket.on("open", (data) => {
+    console.log(new Date().toTimeString(), `client connected to server (${wss.clients.size} total)`);
+  });
+  socket.on("error", (err) => {
+    console.log(err);
+  });
+
   socket.on("message", (data) => {
     let parsedData = JSON.parse(data.toString());
     if (parsedData.text === "requestingID") {
@@ -40,6 +47,16 @@ wss.on("connection", function (socket) {
     console.log("client disconnected");
   });
 });
+wss.on("open", () => {
+  console.log("yeah did it");
+});
+wss.on("error", (err) => console.log("errrrrrr", err));
+setInterval(() => {
+  console.log("sending time");
+  wss.clients.forEach((client) => {
+    client.send(new Date().toTimeString());
+  });
+}, 1000);
 
 wss.on("listening", () => console.log("websocket listening on port", PORT));
 
@@ -107,9 +124,3 @@ server.listen(PORT, () => console.log("server started on", PORT));
       incrementID++;
     }
     */
-
-// setInterval(() => {
-//   wss.clients.forEach((client) => {
-//     client.send(new Date().toTimeString());
-//   });
-// }, 1000);
